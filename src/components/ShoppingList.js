@@ -5,21 +5,27 @@ import Item from "./Item";
 
 function ShoppingList({ items }) {
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [searchText, setSearchText] = useState(""); // Added state for search text
 
   function handleCategoryChange(event) {
     setSelectedCategory(event.target.value);
   }
 
-  const itemsToDisplay = items.filter((item) => {
-    if (selectedCategory === "All") return true;
+  function handleSearchChange(text) {
+    setSearchText(text);
+  }
 
-    return item.category === selectedCategory;
+  const itemsToDisplay = items.filter((item) => {
+    const matchesCategory = selectedCategory === "All" || item.category === selectedCategory;
+    const matchesSearch = item.name.toLowerCase().includes(searchText.toLowerCase());
+
+    return matchesCategory && matchesSearch;
   });
 
   return (
     <div className="ShoppingList">
       <ItemForm />
-      <Filter onCategoryChange={handleCategoryChange} />
+      <Filter onCategoryChange={handleCategoryChange} onSearchChange={handleSearchChange} /> {/* Added onSearchChange prop */}
       <ul className="Items">
         {itemsToDisplay.map((item) => (
           <Item key={item.id} name={item.name} category={item.category} />
